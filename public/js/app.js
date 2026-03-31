@@ -9,26 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const output = document.getElementById('output');
   const outputMeta = document.getElementById('output-meta');
 
-  const agentStatus = document.getElementById('agent-status');
-  const agentLabel = agentStatus.querySelector('.agent-label');
-
   let actionsMap = new Map();
-
-  // Poll agent connection status
-  async function checkAgentStatus() {
-    try {
-      const res = await fetch('/api/agent-status');
-      const data = await res.json();
-      agentStatus.className = 'agent-status ' + (data.connected ? 'agent-connected' : 'agent-disconnected');
-      agentLabel.textContent = data.connected ? 'Agent connected' : 'Agent disconnected';
-    } catch {
-      agentStatus.className = 'agent-status agent-unknown';
-      agentLabel.textContent = 'Status unknown';
-    }
-  }
-
-  checkAgentStatus();
-  setInterval(checkAgentStatus, 5000);
 
   // Load config and populate dropdowns
   async function loadConfig() {
