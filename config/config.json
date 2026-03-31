@@ -2,8 +2,8 @@
   "servers": [
     {
       "id": "AM1",
-      "label": "AM1 Mesh",
-      "host": "192.168.1.10",
+      "label": "AM1 Mesh (15.163.138.59)",
+      "host": "15.163.138.59",
       "port": 22
     },
     {

@@ -44,13 +44,41 @@ header {
   color: var(--color-header-text);
   padding: 20px 0;
   box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
 }
 
 .header-content {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 0 20px;
+  padding: 0;
 }
+
+/* Agent status indicator */
+.agent-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.agent-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.agent-connected .agent-dot { background: #38a169; box-shadow: 0 0 6px #38a169; }
+.agent-connected .agent-label { color: #68d391; }
+
+.agent-disconnected .agent-dot { background: #e53e3e; box-shadow: 0 0 6px #e53e3e; }
+.agent-disconnected .agent-label { color: #fc8181; }
+
+.agent-unknown .agent-dot { background: #718096; }
+.agent-unknown .agent-label { color: #a0aec0; }
 
 header h1 {
   font-size: 1.5rem;

@@ -1,4 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
+  const agentStatusEl = document.getElementById('agent-status');
+  const agentLabelEl = agentStatusEl.querySelector('.agent-label');
+
+  async function checkAgentStatus() {
+    try {
+      const res = await fetch('/api/agent-status');
+      const data = await res.json();
+      agentStatusEl.className = 'agent-status ' + (data.connected ? 'agent-connected' : 'agent-disconnected');
+      agentLabelEl.textContent = data.connected ? 'Local agent connected' : 'Local agent disconnected';
+    } catch {
+      agentStatusEl.className = 'agent-status agent-unknown';
+      agentLabelEl.textContent = 'Agent status unknown';
+    }
+  }
+
+  checkAgentStatus();
+  setInterval(checkAgentStatus, 5000);
+
   const serverSelect = document.getElementById('server-select');
   const actionSelect = document.getElementById('action-select');
   const inputGroup = document.getElementById('input-group');
