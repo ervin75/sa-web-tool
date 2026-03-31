@@ -1,28 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const serverSelect = document.getElementById('server-select');
   const actionSelect = document.getElementById('action-select');
   const inputGroup = document.getElementById('input-group');
   const inputData = document.getElementById('input-data');
-  const username = document.getElementById('username');
-  const password = document.getElementById('password');
   const executeBtn = document.getElementById('execute-btn');
   const output = document.getElementById('output');
   const outputMeta = document.getElementById('output-meta');
 
   let actionsMap = new Map();
 
-  // Load config and populate dropdowns
+  // Load config and populate action dropdown
   async function loadConfig() {
     try {
       const res = await fetch('/api/config');
       const data = await res.json();
-
-      data.servers.forEach(s => {
-        const opt = document.createElement('option');
-        opt.value = s.id;
-        opt.textContent = s.label;
-        serverSelect.appendChild(opt);
-      });
 
       data.actions.forEach(a => {
         actionsMap.set(a.id, a);
@@ -52,16 +42,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Enable/disable execute button based on form validity
   function updateFormState() {
-    const valid = serverSelect.value
-      && actionSelect.value
-      && username.value.trim()
-      && password.value.trim();
-
     const action = actionsMap.get(actionSelect.value);
     const inputRequired = action && action.usesInput;
     const inputValid = !inputRequired || inputData.value.trim();
-
-    executeBtn.disabled = !(valid && inputValid);
+    executeBtn.disabled = !(actionSelect.value && inputValid);
   }
 
   // Execute the command
@@ -73,27 +57,21 @@ document.addEventListener('DOMContentLoaded', () => {
     output.innerHTML = '';
     outputMeta.textContent = '';
 
-    const startTime = Date.now();
-
     try {
       const res = await fetch('/api/execute', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          serverId: serverSelect.value,
           actionId: actionSelect.value,
-          input: inputData.value.trim(),
-          username: username.value.trim(),
-          password: password.value
+          input: inputData.value.trim()
         })
       });
 
       const data = await res.json();
-      const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
 
       if (data.success) {
         output.innerHTML = data.output;
-        outputMeta.textContent = `${data.server} - ${data.action} (${elapsed}s, exit code: ${data.exitCode})`;
+        outputMeta.textContent = `${data.action} — ${(data.executionTime / 1000).toFixed(1)}s, exit code: ${data.exitCode}`;
       } else {
         showError(data.error);
       }
@@ -101,14 +79,11 @@ document.addEventListener('DOMContentLoaded', () => {
       showError('Request failed: ' + err.message);
     } finally {
       setLoading(false);
-      // Clear password after execution for security
-      password.value = '';
-      updateFormState();
     }
   }
 
   function showError(message) {
-    output.innerHTML = `<div class="output-error"><strong>Error</strong>${escapeHtml(message)}</div>`;
+    output.innerHTML = `<div class="output-error"><strong>Error: </strong>${escapeHtml(message)}</div>`;
   }
 
   function escapeHtml(str) {
@@ -132,13 +107,10 @@ document.addEventListener('DOMContentLoaded', () => {
     updateFormState();
   });
 
-  serverSelect.addEventListener('change', updateFormState);
-  username.addEventListener('input', updateFormState);
-  password.addEventListener('input', updateFormState);
   inputData.addEventListener('input', updateFormState);
   executeBtn.addEventListener('click', execute);
 
-  // Ctrl+Enter shortcut
+  // Ctrl+Enter / Cmd+Enter shortcut
   document.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && !executeBtn.disabled) {
       execute();

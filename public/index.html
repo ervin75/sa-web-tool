@@ -3,26 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SA Web Tool — Remote Server Administration</title>
+  <title>SA Web Tool — Local Administration</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <header>
     <div class="header-content">
       <h1>SA Web Tool</h1>
-      <p>Remote Server Administration</p>
+      <p>Local System Administration</p>
     </div>
   </header>
 
   <main>
     <section class="controls">
-      <div class="form-group">
-        <label for="server-select">Server</label>
-        <select id="server-select">
-          <option value="">— Select a server —</option>
-        </select>
-      </div>
-
       <div class="form-group">
         <label for="action-select">Action</label>
         <select id="action-select">
@@ -33,17 +26,6 @@
       <div class="form-group" id="input-group" style="display: none;">
         <label for="input-data">Input Data</label>
         <input type="text" id="input-data" placeholder="" autocomplete="off">
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label for="username">Username</label>
-          <input type="text" id="username" placeholder="SSH username" autocomplete="off">
-        </div>
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" placeholder="SSH password" autocomplete="off">
-        </div>
       </div>
 
       <button id="execute-btn" disabled>
@@ -58,13 +40,13 @@
         <span id="output-meta"></span>
       </div>
       <div id="output" class="output-area">
-        <p class="output-placeholder">Select a server and action, then click Execute to see results.</p>
+        <p class="output-placeholder">Select an action, then click Execute to see results.</p>
       </div>
     </section>
   </main>
 
   <footer>
-    <p>SA Web Tool &mdash; Credentials are never stored. All connections are per-request.</p>
+    <p>SA Web Tool &mdash; Commands run locally on this machine.</p>
   </footer>
 
   <script src="js/app.js"></script>

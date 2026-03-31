@@ -1,24 +1,4 @@
 {
-  "servers": [
-    {
-      "id": "AM1",
-      "label": "AM1 Mesh (15.163.138.59)",
-      "host": "15.163.138.59",
-      "port": 22
-    },
-    {
-      "id": "db-staging-01",
-      "label": "DB Staging 01",
-      "host": "192.168.2.20",
-      "port": 22
-    },
-    {
-      "id": "app-dev-01",
-      "label": "App Development 01",
-      "host": "192.168.3.30",
-      "port": 22
-    }
-  ],
   "actions": [
     {
       "id": "disk-usage",
