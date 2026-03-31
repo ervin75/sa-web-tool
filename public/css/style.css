@@ -42,14 +42,58 @@ body {
 header {
   background: var(--color-header);
   color: var(--color-header-text);
-  padding: 20px 0;
+  padding: 20px;
   box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 100%;
 }
 
 .header-content {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 0 20px;
+  flex: 1;
+}
+
+/* === Agent Status === */
+.agent-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+  white-space: nowrap;
+}
+
+.agent-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.agent-connected .agent-dot {
+  background: #38a169;
+  box-shadow: 0 0 6px rgba(56, 161, 105, 0.6);
+}
+
+.agent-connected .agent-label {
+  color: #68d391;
+}
+
+.agent-disconnected .agent-dot {
+  background: #e53e3e;
+  box-shadow: 0 0 6px rgba(229, 62, 62, 0.6);
+}
+
+.agent-disconnected .agent-label {
+  color: #fc8181;
+}
+
+.agent-unknown .agent-dot {
+  background: #718096;
+}
+
+.agent-unknown .agent-label {
+  color: #a0aec0;
 }
 
 header h1 {
