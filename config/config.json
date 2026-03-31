@@ -2,7 +2,7 @@
   "servers": [
     {
       "id": "AM1",
-      "label": "AM1 Mesh",
+      "label": "AM1 Mesh (15.163.138.59)",
       "host": "15.163.138.59",
       "port": 22
     },
@@ -23,7 +23,7 @@
     {
       "id": "disk-usage",
       "label": "Disk Usage",
-      "command": "df -h",
+      "command": "sudo df -h",
       "usesInput": false,
       "inputPlaceholder": "",
       "parser": "table"
