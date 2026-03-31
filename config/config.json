@@ -1,0 +1,88 @@
+{
+  "servers": [
+    {
+      "id": "AM1",
+      "label": "AM1 Mesh",
+      "host": "192.168.1.10",
+      "port": 22
+    },
+    {
+      "id": "db-staging-01",
+      "label": "DB Staging 01",
+      "host": "192.168.2.20",
+      "port": 22
+    },
+    {
+      "id": "app-dev-01",
+      "label": "App Development 01",
+      "host": "192.168.3.30",
+      "port": 22
+    }
+  ],
+  "actions": [
+    {
+      "id": "disk-usage",
+      "label": "Disk Usage",
+      "command": "df -h",
+      "usesInput": false,
+      "inputPlaceholder": "",
+      "parser": "table"
+    },
+    {
+      "id": "memory-usage",
+      "label": "Memory Usage",
+      "command": "free -h",
+      "usesInput": false,
+      "inputPlaceholder": "",
+      "parser": "table"
+    },
+    {
+      "id": "process-list",
+      "label": "Top Processes by CPU",
+      "command": "ps aux --sort=-%cpu | head -20",
+      "usesInput": false,
+      "inputPlaceholder": "",
+      "parser": "table"
+    },
+    {
+      "id": "service-status",
+      "label": "Service Status",
+      "command": "systemctl status {{input}}",
+      "usesInput": true,
+      "inputPlaceholder": "Service name (e.g. nginx, sshd, docker)",
+      "parser": "plain"
+    },
+    {
+      "id": "tail-log",
+      "label": "Tail Log File",
+      "command": "tail -n 50 {{input}}",
+      "usesInput": true,
+      "inputPlaceholder": "/var/log/syslog",
+      "parser": "log"
+    },
+    {
+      "id": "uptime",
+      "label": "System Uptime",
+      "command": "uptime",
+      "usesInput": false,
+      "inputPlaceholder": "",
+      "parser": "plain"
+    },
+    {
+      "id": "network-connections",
+      "label": "Active Network Connections",
+      "command": "ss -tuln",
+      "usesInput": false,
+      "inputPlaceholder": "",
+      "parser": "table"
+    },
+    {
+      "id": "find-large-files",
+      "label": "Find Large Files (>100MB)",
+      "command": "find / -type f -size +100M -exec ls -lh {} + 2>/dev/null | head -20",
+      "usesInput": false,
+      "inputPlaceholder": "",
+      "parser": "table"
+    }
+  ]
+}
