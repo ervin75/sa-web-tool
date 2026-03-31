@@ -3,7 +3,7 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
 const config = require('./config/config.json');
-const { executeCommand } = require('./lib/local-executor');
+const { executeCommand } = require('./lib/ssh-executor');
 const { parseOutput } = require('./lib/output-parser');
 
 const app = express();
@@ -27,7 +27,7 @@ app.use(express.json({ limit: '1kb' }));
 
 // Rate limiter on execute endpoint
 const executeLimiter = rateLimit({
-  windowMs: 60 * 1000,
+  windowMs: 60 * 1000, // 1 minute
   max: 30,
   message: { success: false, error: 'Too many requests. Please wait before trying again.' },
   standardHeaders: true,
@@ -39,8 +39,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // --- API Routes ---
 
-// GET /api/config — return actions list
+// GET /api/config — return safe subset of config (no host/IP exposed)
 app.get('/api/config', (req, res) => {
+  const servers = config.servers.map(s => ({
+    id: s.id,
+    label: s.label
+  }));
+
   const actions = config.actions.map(a => ({
     id: a.id,
     label: a.label,
@@ -48,13 +53,27 @@ app.get('/api/config', (req, res) => {
     inputPlaceholder: a.inputPlaceholder || ''
   }));
 
-  res.json({ actions });
+  res.json({ servers, actions });
 });
 
-// POST /api/execute — run a predefined command locally
+// POST /api/execute — run a predefined command on a remote server
 app.post('/api/execute', executeLimiter, async (req, res) => {
   try {
-    const { actionId, input } = req.body;
+    const { serverId, actionId, input, username, password } = req.body;
+
+    // Validate required fields
+    if (!serverId || !actionId || !username || !password) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields: serverId, actionId, username, and password are required.'
+      });
+    }
+
+    // Look up server
+    const server = config.servers.find(s => s.id === serverId);
+    if (!server) {
+      return res.status(400).json({ success: false, error: 'Invalid server selection.' });
+    }
 
     // Look up action
     const action = config.actions.find(a => a.id === actionId);
@@ -87,10 +106,15 @@ app.post('/api/execute', executeLimiter, async (req, res) => {
       command = command.replace('{{input}}', input.trim());
     }
 
-    // Execute locally
-    const start = Date.now();
-    const result = await executeCommand({ command, timeout: 30000 });
-    const executionTime = Date.now() - start;
+    // Execute via SSH
+    const result = await executeCommand({
+      host: server.host,
+      port: server.port,
+      username,
+      password,
+      command,
+      timeout: 30000
+    });
 
     // Parse and return output
     const parsedOutput = parseOutput(result.output, action.parser);
@@ -99,8 +123,8 @@ app.post('/api/execute', executeLimiter, async (req, res) => {
       success: true,
       output: parsedOutput,
       exitCode: result.exitCode,
-      action: action.label,
-      executionTime
+      server: server.label,
+      action: action.label
     });
 
   } catch (err) {
@@ -112,6 +136,7 @@ app.post('/api/execute', executeLimiter, async (req, res) => {
 });
 
 // Start server
+// NOTE: In production, place this behind a reverse proxy (nginx/caddy) with TLS
 app.listen(PORT, () => {
   console.log(`SA Web Tool running at http://localhost:${PORT}`);
 });

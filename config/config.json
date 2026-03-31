@@ -1,9 +1,29 @@
 {
+  "servers": [
+    {
+      "id": "AM1",
+      "label": "AM1 Mesh",
+      "host": "192.168.1.10",
+      "port": 22
+    },
+    {
+      "id": "db-staging-01",
+      "label": "DB Staging 01",
+      "host": "192.168.2.20",
+      "port": 22
+    },
+    {
+      "id": "app-dev-01",
+      "label": "App Development 01",
+      "host": "192.168.3.30",
+      "port": 22
+    }
+  ],
   "actions": [
     {
       "id": "disk-usage",
       "label": "Disk Usage",
-      "command": "sudo df -h",
+      "command": "df -h",
       "usesInput": false,
       "inputPlaceholder": "",
       "parser": "table"
